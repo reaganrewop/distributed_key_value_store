@@ -10,6 +10,7 @@ class TreeNode(object):
         self.right = None
         self.height = 1
 
+# AVL tree to perform consistent hashing algorithm, to find distributed store with key.
 class AVL_Tree(object):
     root = None
     min_root = None
@@ -127,7 +128,7 @@ def initStore():
 
     return AVL, store_id_hash_map
 
-def get_store_dict(store_id, c):
+def get_store_dict(store_id :str, c :int) -> dict:
     if  store_id+".lk" not in set(os.listdir()):
         if store_id+".pkl" not in set(os.listdir()):
             pickle.dump({}, open(store_id+".pkl", "wb"))
@@ -138,22 +139,22 @@ def get_store_dict(store_id, c):
         get_store_dict(store_id, c+1)
     return store_dict
 
-def get_store_dict_for_read(store_id):
+def get_store_dict_for_read(store_id :str) -> dict:
     store_dict = pickle.loads(open(store_id+".pkl", "rb"))
     return store_dict
 
-def dump(store_id):
+def dump(store_id :str) -> None:
     pickle.dump({}, open(store_id+".pkl", "wb"))
     os.remove(store_id+".lk")
     return
 
-def findStore(key_sha_id, AVL):
+def findStore(key_sha_id :str, AVL) -> str:
     assigned_store = AVL.getHighest(AVL.root, key_sha_id)
     if assigned_store is None:
         assigned_store = AVL.min_root
     return assigned_store
 
-def write(key, value, AVL):
+def write(key :str, value, AVL) -> None:
     key_sha_id = hashlib.sha256(key.encode()).hexdigest()
     assigned_store = findStore(key_sha_id, AVL)
     store_dict = get_store_dict(assigned_store, 0)
@@ -161,7 +162,7 @@ def write(key, value, AVL):
     dump(key_sha_id)
     return
 
-def read(key):
+def read(key: str):
     key_sha_id = hashlib.sha256(key.encode()).hexdigest()
     assigned_store = findStore(key_sha_id, AVL)
     store_dict = get_store_dict_for_read(assigned_store, 0)
