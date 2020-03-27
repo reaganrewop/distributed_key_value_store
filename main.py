@@ -129,7 +129,9 @@ def initStore():
 
 def get_store_dict(store_id, c):
     if  store_id+".lk" not in set(os.listdir()):
-        store_dict = pickle.load(open(store_id+".pkl", "wb"))
+        if store_id+".pkl" not in set(os.listdir()):
+            pickle.dump({}, open(store_id+".pkl", "wb"))
+        store_dict = pickle.load(open(store_id+".pkl", 'rb'))
         with open(store_id+".lk", 'w') as fp:
             pass
     elif store_id+".lk" not in set(os.listdir()):
@@ -142,7 +144,7 @@ def get_store_dict_for_read(store_id):
     return store_dict
 
 def dump(store_id):
-    pickle.dump(open(store_id+".pkl", "wb"))
+    pickle.dump({}, open(store_id+".pkl", "wb"))
     os.remove(store_id+".lk")
     return
 
