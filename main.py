@@ -131,8 +131,11 @@ def initStore():
 def get_store_dict(store_id :str, c :int) -> dict:
     if  store_id+".lk" not in set(os.listdir()):
         if store_id+".pkl" not in set(os.listdir()):
+            print ("writing dummy store")
             pickle.dump({}, open(store_id+".pkl", "wb"))
+        print ("reading store:", store_id)
         store_dict = pickle.load(open(store_id+".pkl", 'rb'))
+        print ("locking:", store_id)
         pickle.dump({}, open(store_id+".lk", "wb"))
     elif store_id+".lk" in set(os.listdir()):
         time.sleep((2**c)-1)
@@ -140,11 +143,14 @@ def get_store_dict(store_id :str, c :int) -> dict:
     return store_dict
 
 def get_store_dict_for_read(store_id :str) -> dict:
-    store_dict = pickle.loads(open(store_id+".pkl", "rb"))
+    store_dict = pickle.load(open(store_id+".pkl", "rb"))
     return store_dict
 
-def dump(store_id :str) -> None:
-    pickle.dump({}, open(store_id+".pkl", "wb"))
+def dump(store_dict, store_id :str) -> None:
+    print ("writing store:", store_id)
+
+    pickle.dump(store_dict, open(store_id+".pkl", "wb"))
+    print ("removed lock")
     os.remove(store_id+".lk")
     return
 
@@ -159,13 +165,13 @@ def write(key :str, value, AVL) -> None:
     assigned_store = findStore(key_sha_id, AVL)
     store_dict = get_store_dict(assigned_store, 0)
     store_dict[key] = value
-    dump(key_sha_id)
+    dump(store_dict, assigned_store)
     return
 
 def read(key: str):
     key_sha_id = hashlib.sha256(key.encode()).hexdigest()
     assigned_store = findStore(key_sha_id, AVL)
-    store_dict = get_store_dict_for_read(assigned_store, 0)
+    store_dict = get_store_dict_for_read(assigned_store)
     return store_dict[key]
 
 if __name__ == "__main__":
