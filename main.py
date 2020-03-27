@@ -132,9 +132,8 @@ def get_store_dict(store_id, c):
         if store_id+".pkl" not in set(os.listdir()):
             pickle.dump({}, open(store_id+".pkl", "wb"))
         store_dict = pickle.load(open(store_id+".pkl", 'rb'))
-        with open(store_id+".lk", 'w') as fp:
-            pass
-    elif store_id+".lk" not in set(os.listdir()):
+        pickle.dump({}, open(store_id+".lk", "wb"))
+    elif store_id+".lk" in set(os.listdir()):
         time.sleep((2**c)-1)
         get_store_dict(store_id, c+1)
     return store_dict
